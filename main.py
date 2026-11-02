@@ -1,129 +1,175 @@
 import os
 import random
+import shutil
 import time
 
-# Enable terminal colours on Windows.
-os.system("")
+os.system("")  # Enable terminal colours on Windows.
 
 GREEN = "\033[92m"
-RED = "\033[91m"
 DIM = "\033[2m"
+RED = "\033[91m"
 RESET = "\033[0m"
+CHARS = "0123456789ABCDEF"
 
 
-def type_line(text, delay=0.012):
+def width():
+    return min(shutil.get_terminal_size().columns - 1, 90)
+
+
+def clear():
+    print("\033[2J\033[H", end="", flush=True)
+
+
+def say(text, delay=0.018):
     for char in text:
         print(char, end="", flush=True)
         time.sleep(delay)
     print()
 
 
-def log(message, level="OK"):
+def log(text):
     stamp = time.strftime("%H:%M:%S")
-    colour = RED if level == "WARN" else GREEN
-    type_line(f"{DIM}{stamp}{RESET} {colour}[{level}]{RESET} {message}")
-    time.sleep(random.uniform(0.2, 0.6))
+    say(f"{DIM}{stamp}{RESET}{GREEN}  > {text}", 0.008)
+    time.sleep(random.uniform(0.15, 0.45))
+
+
+def code_storm(seconds=2):
+    end = time.monotonic() + seconds
+    while time.monotonic() < end:
+        row = "".join(
+            random.choice(CHARS + "   ") for _ in range(width())
+        )
+        print(random.choice([GREEN, DIM + GREEN]) + row)
+        time.sleep(0.035)
+    print(GREEN, end="")
 
 
 def progress(label):
-    for percent in range(0, 101, 4):
-        filled = percent // 5
-        bar = "#" * filled + "-" * (20 - filled)
+    print()
+    percent = 0
+    while percent < 100:
+        percent = min(100, percent + random.randint(1, 6))
+        filled = percent // 4
+        bar = "█" * filled + "░" * (25 - filled)
         print(
-            f"\r{GREEN}{label} [{bar}] {percent:3d}%{RESET}",
+            f"\r  {label} [{bar}] {percent:3d}%",
             end="",
             flush=True,
         )
-        time.sleep(random.uniform(0.025, 0.08))
+        time.sleep(random.uniform(0.03, 0.12))
+    print("\n")
+
+
+def decrypt():
+    secret = "ACCESS GRANTED"
+    print()
+    for step in range(len(secret) + 1):
+        for _ in range(3):
+            noise = "".join(
+                random.choice(CHARS) for _ in range(len(secret) - step)
+            )
+            print(
+                f"\r  DECRYPTING :: {secret[:step]}{noise}",
+                end="",
+                flush=True,
+            )
+            time.sleep(0.055)
+    print("\n")
+
+
+def run(name):
+    clear()
+    print(GREEN)
+    print("═" * width())
+    print("   G H O S T   P R O T O C O L")
+    print("   CINEMATIC TERMINAL // OFFLINE SIMULATION")
+    print("═" * width())
     print()
 
+    log("BOOTING SECURE CONSOLE...")
+    log("Loading cryptographic modules")
+    code_storm(1.5)
 
-def crack():
-    characters = "0123456789ABCDEF"
-    for _ in range(24):
-        noise = "".join(random.choices(characters, k=32))
-        print(f"\r{GREEN}Testing hash: {noise}{RESET}", end="", flush=True)
-        time.sleep(0.055)
-    print()
-    log("Password recovered: password123", "WARN")
-    log("Even the password gave up trying.")
+    log(f"TARGET LOCKED :: {name}")
+    log("Routing through simulated relay nodes")
 
+    for node in range(1, 5):
+        token = "".join(random.choices(CHARS, k=16))
+        log(f"RELAY {node:02d} :: {token} :: CONNECTED")
 
-def run_scan(name):
-    # These addresses are reserved for documentation.
-    # No network requests are made.
-    address = f"192.0.2.{random.randint(1, 254)}"
+    progress("ESTABLISHING UPLINK")
 
-    print(f"\n{GREEN}{'=' * 58}")
-    print("  GHOST//SCAN — FICTIONAL TARGET ANALYSIS")
-    print(f"{'=' * 58}{RESET}\n")
+    log("PERIMETER DETECTED")
+    log("Analyzing defensive signatures")
+    code_storm(1.2)
+    progress("DECODING FIREWALL")
 
-    log(f"Target alias: {name}")
-    log(f"Assigned simulation address: {address}")
-    log("Initializing simulated reconnaissance")
+    print(RED)
+    say("  [!] COUNTERMEASURE DETECTED", 0.045)
+    time.sleep(0.8)
+    say("  [!] CONNECTION UNSTABLE", 0.045)
+    time.sleep(0.7)
+    print(GREEN)
 
-    for port, service in [(22, "SSH"), (80, "HTTP"), (443, "HTTPS")]:
-        log(f"{address}:{port:<5} OPEN  {service}")
+    log("Switching to secondary channel")
+    code_storm(1.5)
+    decrypt()
 
-    log("Weak authentication detected", "WARN")
-    crack()
-    progress("Analyzing digital footprint")
+    log("SIMULATED ARCHIVE UNLOCKED")
+    progress("RECONSTRUCTING TARGET PROFILE")
 
-    log("Attention span: shorter than this loading bar", "WARN")
-    log("Unfinished projects: storage limit exceeded", "WARN")
-    log("Original thoughts: no matching records", "WARN")
+    findings = [
+        "EGO SIZE ............. EXCEEDS AVAILABLE MEMORY",
+        "COMMON SENSE ......... FILE NOT FOUND",
+        "BRAIN ACTIVITY ....... CONNECTION TIMED OUT",
+        "LIFE PLANS ........... STILL IN DRAFTS",
+    ]
+    for finding in findings:
+        log(finding)
+        time.sleep(0.35)
 
-    progress("Compiling final assessment")
+    time.sleep(1)
+    print("\n" + "═" * width())
+    say("  FINAL INTELLIGENCE REPORT", 0.055)
+    print("═" * width() + "\n")
 
     roasts = [
-        f"{name}, you have the confidence of an expert "
-        "and the results of a tutorial skipped halfway.",
+        f"{name}, you talk like the final boss "
+        "and perform like the tutorial NPC.",
 
-        f"{name}, your potential has been a coming-soon page "
+        f"{name}, your potential has been 'coming soon' "
         "for so long the domain expired.",
 
-        f"{name}, you aren't mysterious. "
-        "People just stopped asking follow-up questions.",
-
-        f"{name}, your entire personality could be replaced "
-        "by three recommended videos.",
-
-        f"{name}, you bring the energy of a software update "
-        "nobody asked for and everyone postpones.",
-
-        f"{name}, your plans have more abandoned branches "
-        "than a dead GitHub account.",
-
-        f"{name}, you talk like the final boss "
-        "and perform like the optional tutorial.",
+        f"{name}, you're living proof that confidence "
+        "doesn't require supporting evidence.",
 
         f"{name}, even your imaginary haters "
-        "have moved on to more interesting people.",
+        "found someone more interesting.",
+
+        f"{name}, your brain has so many open tabs "
+        "and somehow none of them are loading.",
     ]
 
-    print(f"\n{RED}{'=' * 58}")
-    print("  CLASSIFIED FINDING")
-    print(f"{'=' * 58}{RESET}")
-    type_line(random.choice(roasts), delay=0.035)
-    print(f"\n{GREEN}> Simulation complete. Ego recovery pending.{RESET}\n")
+    say(random.choice(roasts), 0.045)
+    print()
+    log("SESSION TERMINATED // EGO DAMAGE CONFIRMED")
+    print(RESET)
 
-
-print(f"{GREEN}TRUST ME, I'M HACKING{RESET}")
-print("Offline simulation. No real scanning or data access.\n")
 
 try:
     while True:
-        name = input("Target name (or 'quit'): ").strip()
+        print(GREEN)
+        name = input("\nENTER TARGET NAME (or quit): ").strip()
+        name = "".join(c for c in name if c.isprintable())[:40]
 
         if name.lower() == "quit":
             break
-        if not name:
-            continue
-
-        # Remove control characters from terminal input.
-        name = "".join(char for char in name if char.isprintable())[:40]
         if name:
-            run_scan(name)
+            run(name)
+            input("\nPress Enter to start another session...")
 
 except (KeyboardInterrupt, EOFError):
-    print(f"\n{RESET}Session closed.")
+    pass
+
+finally:
+    print(RESET)
